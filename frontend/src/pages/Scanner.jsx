@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ResultCard from '../components/ResultCard';
 import ExplanationChart from '../components/ExplanationChart';
+import GlobalThreatCheck from '../components/GlobalThreatCheck';
+import soundManager from '../utils/SoundManager';
 
 const SAMPLES = [
   { url: "http://paypa1-secure.tk/login", label: "Phishing" },
@@ -33,6 +36,13 @@ const Scanner = () => {
 
   const analyzeUrl = async (targetUrl) => {
     if (!targetUrl) return;
+    
+    soundManager.playScanSound();
+    
+    // PRE-LOAD THE SCREENSHOT IN THE BACKGROUND TO ELIMINATE LOADING WAIT TIME
+    const preloaderImg = new window.Image();
+    preloaderImg.src = `https://s0.wp.com/mshots/v1/${encodeURIComponent(targetUrl)}?w=1200`;
+    
     setLoading(true);
     setError(null);
     setResult(null);
@@ -44,11 +54,18 @@ const Scanner = () => {
       const response = await axios.post('http://127.0.0.1:8000/analyze', { url: targetUrl });
       if (response.data.error) {
         setError(response.data.error);
+        soundManager.playAlertSound();
       } else {
         setResult(response.data);
+        if (response.data.label === 'PHISHING' || response.data.label === 'SUSPICIOUS') {
+          soundManager.playAlertSound();
+        } else {
+          soundManager.playSafeSound();
+        }
       }
     } catch (err) {
       setError("Network payload deployment failed. Ensure backend API is active on port 8000.");
+      soundManager.playAlertSound();
     } finally {
       setLoading(false);
     }
@@ -60,9 +77,17 @@ const Scanner = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-6 animate-fadeIn py-8">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full flex flex-col gap-6 py-8"
+    >
       {/* Search Header */}
-      <div className="glass-panel p-8 rounded-2xl border border-border shadow-2xl relative overflow-hidden">
+      <motion.div 
+        layout
+        className="glass-panel p-8 rounded-2xl border border-border shadow-2xl relative overflow-hidden"
+      >
         {loading && <div className="scan-line"></div>}
         
         <h2 className="text-3xl font-sans font-bold text-white mb-2">Threat Intelligence Scanner</h2>
@@ -105,22 +130,36 @@ const Scanner = () => {
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      {error && (
-        <div className="bg-phishing/10 border border-phishing/30 text-phishing p-4 rounded-xl font-mono text-sm">
-          [!] CRITICAL ERROR: {error}
-        </div>
-      )}
+      <AnimatePresence mode="wait">
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-phishing/10 border border-phishing/30 text-phishing p-4 rounded-xl font-mono text-sm overflow-hidden"
+          >
+            [!] CRITICAL ERROR: {error}
+          </motion.div>
+        )}
 
-      {/* Results Container */}
-      {result && !loading && (
-        <div className="animate-fadeIn relative">
-          <ResultCard result={result} />
-          <ExplanationChart explanation={result.explanation} label={result.label} />
-        </div>
-      )}
-    </div>
+        {/* Results Container */}
+        {result && !loading && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="relative flex flex-col"
+          >
+            <ResultCard result={result} />
+            <ExplanationChart explanation={result.explanation} label={result.label} />
+            <GlobalThreatCheck result={result} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
