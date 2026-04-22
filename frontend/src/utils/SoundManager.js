@@ -81,6 +81,80 @@ class SoundManager {
     osc.start();
     osc.stop(this.audioContext.currentTime + 0.5);
   }
+
+  // Play a subtle high-tech tick for hovering
+  playHoverSound() {
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+    const osc = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, this.audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, this.audioContext.currentTime + 0.05);
+    
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.02, this.audioContext.currentTime + 0.01);
+    gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.05);
+    
+    osc.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+    
+    osc.start();
+    osc.stop(this.audioContext.currentTime + 0.05);
+  }
+
+  // Play a crisp click for buttons
+  playClickSound() {
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+    const osc = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+    
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(400, this.audioContext.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, this.audioContext.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.05, this.audioContext.currentTime + 0.01);
+    gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.1);
+    
+    osc.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+    
+    osc.start();
+    osc.stop(this.audioContext.currentTime + 0.1);
+  }
+
+  // Play a system boot sound for page load animation
+  playBootSound() {
+    if (this.audioContext.state === 'suspended') {
+      // Browsers often block audio before user interaction, but we try anyway
+      this.audioContext.resume().catch(() => {});
+    }
+    try {
+      const osc = this.audioContext.createOscillator();
+      const gainNode = this.audioContext.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(100, this.audioContext.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, this.audioContext.currentTime + 0.8);
+      
+      gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, this.audioContext.currentTime + 0.4);
+      gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + 0.8);
+      
+      osc.connect(gainNode);
+      gainNode.connect(this.audioContext.destination);
+      
+      osc.start();
+      osc.stop(this.audioContext.currentTime + 0.8);
+    } catch(e) {
+      console.warn("AudioContext not ready for boot sound", e);
+    }
+  }
 }
 
 // Export a singleton instance
