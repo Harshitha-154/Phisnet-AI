@@ -79,7 +79,7 @@
 ## ⚙️ Installation
 
 ```bash
-git clone https://github.com/Harshitha-154/phisnet-ai.git
+git clone https://github.com/KIROSHAN-M/phisnet-ai.git
 
 cd frontend
 npm install
@@ -96,20 +96,18 @@ python app.py
   <img src="https://raw.githubusercontent.com/Platane/snk/output/github-contribution-grid-snake.svg" />
 </p>
 
----
 
 ## 📊 GitHub Stats
 
+
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Harshitha-154&show_icons=true&theme=tokyonight&hide_border=true"/>
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=Harshitha-154&theme=tokyonight&hide_border=true"/>
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Harshitha-154&layout=compact&theme=tokyonight&hide_border=true"/>
+  <img src="https://github-readme-stats.vercel.app/api?username=KIROSHAN-M&show_icons=true&theme=tokyonight&hide_border=true"/>
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=KIROSHAN-M&theme=tokyonight&hide_border=true"/>
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=KIROSHAN-M&layout=compact&theme=tokyonight&hide_border=true"/>
 </p>
 
----
-
 <p align="center">
-  🔥 Built with ❤️ by <b>Harshitha-154</b>
+  🔥 Built with ❤️ for Cyber Security
 </p>
 
 <p align="center">
